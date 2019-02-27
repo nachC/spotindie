@@ -4,13 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
     <title>Spotindie</title>
 </head>
 
 <body>
-    <h1>DIS IS SPOTINDIE</h1>
-    <!-- <iframe src="https://embed.spotify.com/?uri=spotify:track:4VV8iDqggUeRl0h8Dl04Hz" width="300" height="380"
-        frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe> -->
+    <h1 class="jumbotron">DIS IS SPOTINDIE</h1>
+    <button id="indie" class="btn btn-primary search-btn">Test</button>
+    <iframe src="" width="300" height="380"
+        frameborder="0" allowtransparency="true" allow="encrypted-media" style="display: none"></iframe>
+
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/popper.min.js"></script>
+    <script src="./js/bootstrap.bundle.min.js"></script>
+
+    <script type="text/javascript">
+        $('.search-btn').click(() => {
+            let genre = $('.search-btn').attr('id');
+
+            $.ajax({
+                type: 'GET',
+                url: `http://localhost:3000/search?genre=${genre}`,
+                success: (data) => {
+                    console.log('success');
+                    console.log(JSON.stringify(data));
+                    $('iframe').css('display', 'block');
+                    $('iframe').attr('src', `https://embed.spotify.com/?uri=${data}`);
+                }
+            })
+        });
+    </script>
 </body>
 
 </html>

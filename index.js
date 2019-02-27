@@ -1,7 +1,8 @@
 require('dotenv').config();
 const express = require('express');
-const app = express();
+const cors = require('cors');
 const SpotifyWebApi = require('spotify-web-api-node');
+const app = express();
 
 const port = process.env.PORT || 3000;
 
@@ -11,18 +12,20 @@ const spotifyApi = new SpotifyWebApi({
     clientSecret: process.env.CLIENT_SECRET
 });
 
+app.use(cors())
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', (req, res) => res.sendFile('/index.html'));
 
 /* ENDPOINT TO GET RANDOM SONG */
 app.get('/search', async (req, res) => {
+    let genre = req.query.genre;
     let success = false;
     let tries = 0;
     while (!success && tries !== 2) {
         try {
             // get playlists
-            const playlists_data = await spotifyApi.searchPlaylists('indie r&b');
+            const playlists_data = await spotifyApi.searchPlaylists(genre);
             // store total amount of playlists from response
             const playlists_total = playlists_data.body.playlists['total'];
             // set limit of playlists to receive from request
@@ -31,7 +34,7 @@ app.get('/search', async (req, res) => {
             // API limits the offset to 10000 at max
             const offset = Math.floor(Math.random() * ((playlists_total > 10000 ? 10000 : playlists_total) - limit));
             // get playlists again but using the limit and offset values set above
-            const playlists_data_final = await spotifyApi.searchPlaylists('indie r&b', {
+            const playlists_data_final = await spotifyApi.searchPlaylists(genre, {
                 limit,
                 offset
             });
@@ -48,10 +51,8 @@ app.get('/search', async (req, res) => {
             // send track's URI
             console.log("Track URI: ", track_data.track.uri)
             res.statusCode = 200;
-            res.setHeader('Content-Type', 'Application/json');
-            res.json({
-                trackURI: track_data.track.uri
-            });
+            //res.setHeader('Content-Type', 'Application/json');
+            res.send(track_data.track.uri);
 
             success = true;
             tries = 0;
