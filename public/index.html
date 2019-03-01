@@ -5,14 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/style.css">
     <title>Spotindie</title>
 </head>
 
 <body>
-    <h1 class="jumbotron">DIS IS SPOTINDIE</h1>
-    <button id="indie" class="btn btn-primary search-btn">Test</button>
-    <iframe src="" width="300" height="380"
-        frameborder="0" allowtransparency="true" allow="encrypted-media" style="display: none"></iframe>
+    <div class="container-fluid">
+        <div class="content">
+            <div class="content-header">
+                <h1 class="title">SPOTINDIE</h1>
+                <!-- <button id="indie" class="btn btn-primary search-btn">Test</button> -->
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Choose genre
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a id="indie" class="dropdown-item" onclick="search()">Indie</a>
+                        <a id="indie pop" class="dropdown-item" onclick="search()">Indie Pop</a>
+                        <a id="indie rock" class="dropdown-item" onclick="search()">Indie Rock</a>
+                    </div>
+                </div>
+            </div>
+            <div class="content-body">
+                <iframe id="player" src="" width="300" height="380" frameborder="0" allowtransparency="true"
+                    allow="encrypted-media" style="display: none"></iframe>
+
+                <div id=playlist-info>
+                    <h6 id="playlist-name"></h6>
+                    <a id="playlist-link" target="blank">Playlist link</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="./js/jquery.min.js"></script>
     <script src="./js/popper.min.js"></script>
@@ -21,7 +46,6 @@
     <script type="text/javascript">
         $('.search-btn').click(() => {
             let genre = $('.search-btn').attr('id');
-
             $.ajax({
                 type: 'GET',
                 url: `http://localhost:3000/search?genre=${genre}`,
@@ -29,9 +53,12 @@
                     console.log('success');
                     console.log(JSON.stringify(data));
                     $('iframe').css('display', 'block');
-                    $('iframe').attr('src', `https://embed.spotify.com/?uri=${data}`);
+                    $('iframe').attr('src', `https://embed.spotify.com/?uri=${data.trackId}`);
+                    $('#playlist-name').text(data.playlistName);
+                    $('#playlist-link').attr('href', data.playlistLink);
+                    $('#playlist-info').css('display', 'block');
                 }
-            })
+            });
         });
     </script>
 </body>

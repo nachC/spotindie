@@ -12,7 +12,7 @@ const spotifyApi = new SpotifyWebApi({
     clientSecret: process.env.CLIENT_SECRET
 });
 
-app.use(cors())
+app.use(cors());
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', (req, res) => res.sendFile('/index.html'));
@@ -40,19 +40,19 @@ app.get('/search', async (req, res) => {
             });
             // set array of playlists obtained
             const playlists_arr = playlists_data_final.body.playlists['items'];
-            //console.log("playlists_arr", playlists_arr);
             // select one playlist at random from playlists_arr
             const playlist = playlists_arr[Math.floor(Math.random() * playlists_arr.length)];
-            //console.log("playlist", playlist)
             // get selected playlist's tracks
             const tracks = await spotifyApi.getPlaylistTracks(playlist.id);
             // select one track at random from tracks
-            const track_data = tracks.body['items'][Math.floor(Math.random() * tracks.body['items'].length)]
-            // send track's URI
-            console.log("Track URI: ", track_data.track.uri)
+            const track_data = tracks.body['items'][Math.floor(Math.random() * tracks.body['items'].length)];
+            console.log("Success")
             res.statusCode = 200;
-            //res.setHeader('Content-Type', 'Application/json');
-            res.send(track_data.track.uri);
+            res.json({
+                trackId: track_data.track.uri,
+                playlistLink: playlist.external_urls.spotify,
+                playlistName: playlist.name
+            });
 
             success = true;
             tries = 0;
@@ -75,4 +75,4 @@ app.get('/search', async (req, res) => {
 });
 
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => console.log(`Listening on port ${port}`));
