@@ -14,26 +14,36 @@
         <div class="content">
             <div class="content-header">
                 <h1 class="title">SPOTINDIE</h1>
-                <!-- <button id="indie" class="btn btn-primary search-btn">Test</button> -->
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                    <button class="btn btn-custom dropdown-toggle" type="button" id="dropdownMenuButton"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Choose genre
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a id="indie" class="dropdown-item" onclick="search()">Indie</a>
-                        <a id="indie pop" class="dropdown-item" onclick="search()">Indie Pop</a>
-                        <a id="indie rock" class="dropdown-item" onclick="search()">Indie Rock</a>
+                        <p id="indie" class="dropdown-item">Indie</p>
+                        <p id="indie pop" class="dropdown-item">Indie Pop</p>
+                        <p id="indie rock" class="dropdown-item">Indie Rock</p>
+                        <p id="indie folk" class="dropdown-item">Indie Folk</p>
+                        <p id="indie hip hop" class="dropdown-item">Indie Hip Hop</p>
+                        <p id="indie dance" class="dropdown-item">Indie Dance</p>
+                        <p id="indietronica" class="dropdown-item">Indietronica</p>
                     </div>
                 </div>
             </div>
             <div class="content-body">
+                <div class="spinner-border" role="status" style="display: none">
+                    <span class="sr-only">Loading...</span>
+                </div>
                 <iframe id="player" src="" width="300" height="380" frameborder="0" allowtransparency="true"
                     allow="encrypted-media" style="display: none"></iframe>
 
                 <div id=playlist-info>
                     <h6 id="playlist-name"></h6>
                     <a id="playlist-link" target="blank">Playlist link</a>
+                </div>
+
+                <div class="error">
+                    <p id="error-message"></p>
                 </div>
             </div>
         </div>
@@ -44,19 +54,28 @@
     <script src="./js/bootstrap.bundle.min.js"></script>
 
     <script type="text/javascript">
-        $('.search-btn').click(() => {
-            let genre = $('.search-btn').attr('id');
+        $('.dropdown-item').click(function () {
+            let genre = $(this).attr('id');
+            $('.spinner-border').show();
+            $('iframe').hide();
+            $('#playlist-info').hide();
+            $('#error-message').hide();
             $.ajax({
                 type: 'GET',
-                url: `http://localhost:3000/search?genre=${genre}`,
+                url: `https://spotindie.herokuapp.com/search?genre=${genre}`,
                 success: (data) => {
-                    console.log('success');
-                    console.log(JSON.stringify(data));
                     $('iframe').css('display', 'block');
                     $('iframe').attr('src', `https://embed.spotify.com/?uri=${data.trackId}`);
                     $('#playlist-name').text(data.playlistName);
                     $('#playlist-link').attr('href', data.playlistLink);
                     $('#playlist-info').css('display', 'block');
+                },
+                error: (err) => {
+                    $('#error-message').css('display', 'block');
+                    $('#error-message').text(`Oops, ${err.responseJSON['error']}`);
+                },
+                complete: () => {
+                    $('.spinner-border').hide();
                 }
             });
         });

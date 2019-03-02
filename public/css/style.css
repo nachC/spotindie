@@ -17,24 +17,32 @@ body {
 
 .content {
     margin: 6vh auto;
-    /* background-color: #950740; */
-    border: solid 2px #950740;
+    background-image: linear-gradient(#950740, #1a1a1d);
+    min-width: 320px;
     width: 70%;
     min-height: 85%;
     text-align: center;
 }
 
 .content-header {
-    /* border: solid 1px red; */
     padding: 1vh;
 }
 
 .title {
-    color: #950740;
+    color: #c3073f;
+    margin: 2vh;
+}
+
+#dropdownMenuButton {
+    margin: 2vh;
+}
+
+.btn-custom {
+    background-color: #1a1a1d;   
+    color: #4e4e50;
 }
 
 .content-body {
-    /* border: solid 1px red; */
     margin-top: 2vh;
     padding: 1vh;
     text-align: center;
@@ -47,9 +55,16 @@ body {
 #playlist-info {
     display: none;
     border: solid 1px #950740;
-    /* background-color: #c3073f; */
-    margin: 1vh auto;
-    /* border: solid 1px red; */
+    color: white;
+    margin: 2vh auto;
+    padding: 1vh;
     max-width: 350px;
-    height: 100px;
+}
+
+#playlist-link {
+    font-size: 1.4em;
+}
+
+.error {
+    color: white;
 }

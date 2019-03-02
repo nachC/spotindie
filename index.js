@@ -12,6 +12,9 @@ const spotifyApi = new SpotifyWebApi({
     clientSecret: process.env.CLIENT_SECRET
 });
 
+// Allowed genres
+genres = ['indie', 'indie pop', 'indie rock', 'indie folk', 'indie hip hop', 'indie dance', 'indietronica'];
+
 app.use(cors());
 app.use(express.static(__dirname + '/public'));
 
@@ -19,6 +22,9 @@ app.get('/', (req, res) => res.sendFile('/index.html'));
 
 /* ENDPOINT TO GET RANDOM SONG */
 app.get('/search', async (req, res) => {
+    if (!genres.some(e => e === req.query.genre)) {
+        return res.status(500).json({ error: 'there was a problem processing your query' })
+    }
     let genre = req.query.genre;
     let success = false;
     let tries = 0;
@@ -46,18 +52,16 @@ app.get('/search', async (req, res) => {
             const tracks = await spotifyApi.getPlaylistTracks(playlist.id);
             // select one track at random from tracks
             const track_data = tracks.body['items'][Math.floor(Math.random() * tracks.body['items'].length)];
-            console.log("Success")
+
             res.statusCode = 200;
             res.json({
                 trackId: track_data.track.uri,
                 playlistLink: playlist.external_urls.spotify,
                 playlistName: playlist.name
             });
-
             success = true;
             tries = 0;
         } catch (err) {
-            console.log("Catch 1", err);
             if (err.statusCode === 401) {
                 try {
                     // get credentials -> access token
@@ -66,8 +70,10 @@ app.get('/search', async (req, res) => {
                     // set access token for future use
                     spotifyApi.setAccessToken(access_token);
                 } catch (err) {
-                    console.log("Catch 2", err);
+                    if (tries === 1) return res.status(500).json({ error: 'internal error, try again.' });
                 }
+            } else {
+                return res.status(500).json({ error: 'internal error, try again.' });
             }
             tries++;
         }
