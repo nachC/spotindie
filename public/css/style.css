@@ -20,6 +20,7 @@ body {
     background-image: linear-gradient(#950740, #1a1a1d);
     min-width: 320px;
     width: 70%;
+    max-width: 900px;
     min-height: 85%;
     text-align: center;
 }
@@ -31,6 +32,11 @@ body {
 .title {
     color: #c3073f;
     margin: 2vh;
+}
+
+.content-header > p {
+    font-size: 1.2em;
+    color: #1a1a1d;
 }
 
 #dropdownMenuButton {
